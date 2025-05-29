@@ -1,3 +1,5 @@
+from sqlalchemy.sql.functions import current_user
+
 from app.db import async_session_maker
 from sqlalchemy import  select , insert
 
@@ -6,9 +8,9 @@ class BaseDao:
     model=None
 
     @classmethod
-    async def find_all(cls):
+    async def find_all(cls , **filter_by):
         async with async_session_maker() as session:
-            query = select(cls.model.__table__)
+            query = select(cls.model.__table__).filter_by(**filter_by)
             res = await session.execute(query)
             return res.mappings().all()
 
